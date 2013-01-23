@@ -1,0 +1,1 @@
+还是习惯原版的 [Shiftit](http://code.google.com/p/shiftit/) 快捷键设置，无聊又添了几行硬编码，去掉了当 Dock 自动隐藏时屏幕两侧和底部的4像素空隙。

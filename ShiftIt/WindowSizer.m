@@ -64,13 +64,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -(void)getVisibleScreenParams{
     NSArray * tempArray = [NSScreen screens];
+    NSScreen * tempScreen = NULL;
+
     if ([tempArray count] ==1) {
-        NSScreen * tempScreen = (NSScreen*)[tempArray objectAtIndex:0];
+        tempScreen = (NSScreen*)[tempArray objectAtIndex:0];
         _screenVisibleSize = tempScreen.visibleFrame.size;
         _screenVisiblePosition = tempScreen.visibleFrame.origin;
     }else {
         for(int i = 0;i<[tempArray count]; i++){
-            NSScreen * tempScreen = (NSScreen*)[tempArray objectAtIndex:i];
+            tempScreen = (NSScreen*)[tempArray objectAtIndex:i];
             if (tempScreen.frame.origin.x == _screenPosition.x) {
                 _screenVisibleSize = tempScreen.visibleFrame.size;
                 _screenVisiblePosition = tempScreen.visibleFrame.origin;
@@ -78,8 +80,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             }
         }
     }
-
     
+    if (NULL != tempScreen) {
+        if (4 == tempScreen.frame.size.width - _screenVisibleSize.width) {
+            // if dock automatically hide on left or right,
+            // remove 4px gap from left or right side of screen,
+            // remove 21px gap from bottom side of screen.
+            _screenVisibleSize.width += 4;
+            if (4 == _screenVisiblePosition.x) {
+                _screenVisiblePosition.x = 0;
+            }
+        } else if (4 == tempScreen.frame.size.height - _screenVisibleSize.height - _menuBarHeight) {
+            // if dock automatically hide on bottom,
+            // remove 4px gap from bottom side of screen (fullscreen still have 4px gap -_-).
+            _screenVisibleSize.height += 4;
+            if (4 == _screenVisiblePosition.y) {
+                _screenVisiblePosition.y = 0;
+            }
+        }
+    }
 }
 
 -(BOOL)getWindowParameters{
